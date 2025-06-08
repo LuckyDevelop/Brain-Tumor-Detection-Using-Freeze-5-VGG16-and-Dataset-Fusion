@@ -83,18 +83,41 @@ class_weights = class_weight.compute_class_weight(
 class_weights = dict(enumerate(class_weights))
 print(f"Computed Class Weights: {class_weights}")
 
-# Visualize Some Augmented Images
-def visualize_augmented_images(generator, num_images=6):
+def get_file_paths_and_labels(directory):
+    filepaths = []
+    labels = []
+    class_names = sorted([d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d))])
+    
+    for class_name in class_names:
+        class_dir = os.path.join(directory, class_name)
+        for filename in os.listdir(class_dir):
+            if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+                filepaths.append(os.path.join(class_dir, filename))
+                labels.append(class_name)
+    
+    return filepaths, labels, class_names
+
+train_filepaths, train_labels, class_names = get_file_paths_and_labels(train_dir)
+
+label_to_index = {name: index for index, name in enumerate(class_names)}
+
+train_label_indices = np.array([label_to_index[label] for label in train_labels])
+
+train_df = pd.DataFrame({'filepaths': train_filepaths, 'labels': train_labels})
+
+def visualize_augmented_images(generator, class_names, num_images=6):
     x_batch, y_batch = next(generator)
     plt.figure(figsize=(12, 6))
     for i in range(num_images):
-        plt.subplot(2, num_images//2, i+1)
+        plt.subplot(2, num_images // 2, i + 1)
         plt.imshow(x_batch[i])
-        plt.title(f"Label: {np.argmax(y_batch[i])}")
+        label_index = np.argmax(y_batch[i])
+        plt.title(f"Label: {class_names[label_index]}")
         plt.axis('off')
     plt.tight_layout()
     plt.show()
-visualize_augmented_images(train_generator)
+
+visualize_augmented_images(train_generator, class_names)
 
 # Create VGG16 Model with Fine-Tuning
 base_model = VGG16(weights='imagenet', include_top=False, input_shape=(img_width, img_height, 3))

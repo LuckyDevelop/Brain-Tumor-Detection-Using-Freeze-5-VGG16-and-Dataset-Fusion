@@ -16,7 +16,7 @@ MRI brain tumor classification using a freeze-5 fine-tuned VGG16 model with data
 1. Clone this repository
 
    ```bash
-   git clone https://github.com/username/repo-name.git
+   git clone https://github.com/LuckyDevelop/Brain-Tumor-Detection-Using-Freeze-5-VGG16-and-Dataset-Fusion.git
    cd repo-name
 
    ```
@@ -40,7 +40,8 @@ MRI brain tumor classification using a freeze-5 fine-tuned VGG16 model with data
 - Prepare dataset according to instructions in data/README.md
 - Run training script:
 
-  ```python train.py
+  ```bash
+  python train.py
 
   ```
 
